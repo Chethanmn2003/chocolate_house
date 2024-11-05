@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chocolate House</title>
+</head>
+<body>
+    <h1>Chocolate House Management</h1>
+
+    <h2>Add Seasonal Flavor</h2>
+    <form id="flavorForm">
+        <label for="flavor_name">Flavor Name:</label>
+        <input type="text" id="flavor_name" name="flavor_name" required>
+        <br>
+        <label for="flavor_price">Price:</label>
+        <input type="number" id="flavor_price" name="flavor_price" step="0.01" required>
+        <br>
+        <button type="submit">Add Flavor</button>
+    </form>
+
+    <h2>Add Ingredient</h2>
+    <form id="ingredientForm">
+        <label for="ingredient_name">Ingredient Name:</label>
+        <input type="text" id="ingredient_name" name="ingredient_name" required>
+        <br>
+        <label for="ingredient_quantity">Quantity:</label>
+        <input type="number" id="ingredient_quantity" name="ingredient_quantity" required>
+        <br>
+        <button type="submit">Add Ingredient</button>
+    </form>
+
+    <h2>Add Customer Feedback</h2>
+<form id="feedbackForm">
+    <label for="suggestion">Suggestion:</label>
+    <textarea id="suggestion" name="suggestion" required></textarea>
+    <br>
+
+    <label for="allergy_concern">Allergy Concern:</label>
+    <input type="text" id="allergy_concern" name="allergy_concern" required>
+    <br>
+    
+    <button type="submit">Submit Feedback</button>
+</form>
+
+
+    <script>
+        document.getElementById('flavorForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('flavor_name').value;
+            const price = parseFloat(document.getElementById('flavor_price').value);
+
+            const response = await fetch('/seasonal_flavor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, price }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(`Flavor added: ${data.name} for $${data.price}`);
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.error}`);
+            }
+        };
+
+        document.getElementById('ingredientForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('ingredient_name').value;
+            const quantity = document.getElementById('ingredient_quantity').value;
+
+            const response = await fetch('/ingredient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, quantity }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(`Ingredient added: ${data.name} with quantity ${data.quantity}`);
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.error}`);
+            }
+        };
+
+        document.getElementById('feedbackForm').onsubmit = async function(event) {
+    event.preventDefault();
+    const suggestion = document.getElementById('suggestion').value; // Get suggestion input
+    const allergyConcern = document.getElementById('allergy_concern').value; // Get allergy concern input
+
+    const response = await fetch('/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ suggestion, allergy_concern: allergyConcern }), // Send suggestion and allergy concern
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        alert(`Feedback submitted: Suggestion - ${data.suggestion}, Allergy Concern - ${data.allergy_concern}`);
+    } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
+    }
+
+        };
+    </script>
+</body>
+</html>
